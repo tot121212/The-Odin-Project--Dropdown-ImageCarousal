@@ -1,9 +1,11 @@
 body{
-    --tw-text-opacity: 1;
-    color: rgb(209 213 219 / var(--tw-text-opacity));
+    --text-opacity: 1;
+    color: rgb(209 213 219 / var(--text-opacity));
 
-    --tw-bg-opacity: 1;
-    background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+    --bg-opacity: 1;
+    background-color: rgb(17 24 39 / var(--bg-opacity));
+
+    padding: 24px;
 }
 
 svg, object[type="image/svg+xml"] {
