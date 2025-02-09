@@ -1,0 +1,71 @@
+body{
+    --tw-text-opacity: 1;
+    color: rgb(209 213 219 / var(--tw-text-opacity));
+
+    --tw-bg-opacity: 1;
+    background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+
+svg, object[type="image/svg+xml"] {
+    filter: invert(100%);
+    width: 100%;
+    height: 100%;
+}
+
+.grabbable:hover{
+    cursor: grab;
+}
+
+.grabbable-blue-border:hover{
+    border: 2px solid lightblue;
+
+}
+
+.grabbable > * {
+    position: relative;
+    z-index: -100;
+}
+
+.logo{
+    border: none;
+    background: none;
+}
+
+.large{
+    max-width: 32px;
+}
+
+nav{
+    display: flex;
+    flex-direction: row;
+    min-height: 3rem;
+}
+
+#settings-container .btns{
+    position: absolute;
+    padding: 8px;
+    border: 1px dashed lightblue;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeEffect {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.fade {
+    animation: fadeEffect 0.3s ease-in-out;
+}
+
+#settings-container .btns{
+    animation: fadeIn 0.6s ease-in-out;
+}
