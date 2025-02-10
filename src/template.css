@@ -6,24 +6,26 @@ body{
     background-color: rgb(17 24 39 / var(--bg-opacity));
 
     padding: 24px;
+
+    display: grid;
+    grid-template-rows: 1fr 10fr;
 }
 
-button{
-    color: rgb(209 213 219 / var(--text-opacity));
-    font-size: 1.5rem;
-}
+body nav{
+    grid-row: 1/2;
 
-
-nav{
     display: flex;
     flex-direction: row;
     min-height: 3rem;
+    padding: 16px;
 }
 
 #settings-container .btns{
     position: absolute;
     padding: 8px;
     border: 1px dashed lightblue;
+    background-color: black;
+    z-index: 100000;
 }
 
 #settings-container .btns{
@@ -39,10 +41,42 @@ nav{
     flex: 1 0 0;
 }
 
-svg, object[type="image/svg+xml"] {
+.carousal {
+    width: calc(100% - 48px);
+
+    position: absolute;
+
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 98%;
+    gap: 8px;
+
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+
+.carousal .img-container{
+    scroll-snap-align: start;
+    height: auto;
+    width: 100%;
+}
+
+.carousal img{
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
+
+object[type="image/svg+xml"] {
     filter: invert(100%);
     width: 100%;
     height: 100%;
+}
+
+button{
+    color: rgb(209 213 219 / var(--text-opacity));
+    font-size: 1.5rem;
 }
 
 .grabbable:hover{
@@ -62,10 +96,16 @@ svg, object[type="image/svg+xml"] {
 .logo{
     border: none;
     background: none;
+    width: 100%;
+}
+
+#settings-container{
+    aspect-ratio: 1/1;
 }
 
 .large{
-    max-width: 32px;
+    min-width: 32px;
+    min-height: 32px;
 }
 
 @keyframes fadeIn {
