@@ -76,23 +76,54 @@ export class HTMLHandler {
         }
     }
 
-    static carouselsAreMousedOver = false;
+    static getTotalScrollableWidth(items) {
+        let totalWidth = 0;
+        
+        items.forEach((item) => {
+            const style = window.getComputedStyle(item);
+            const marginRight = parseFloat(style.marginRight) || 0;
+            totalWidth += item.getBoundingClientRect().width + marginRight;
+        });
+    
+        return totalWidth;
+    }
+    
 
     //typeof carousels === NodeListOf<Element>
     static moveCarousels = (carousels, ms)=>{
         // Function to rotate a single carousel
         function rotateCarousel(carousel) {
-            const items = carousel.querySelectorAll('.carousel-item');
-            const totalWidth = carousel.offsetWidth;
-            const totalItems = items.length;
-            let currentIndex = 0;
+            console.log("Init carousel");
+            let isMouseOver = false;
+            carousel.addEventListener('mouseover', () => {
+                isMouseOver = true;
+            });
 
+            carousel.addEventListener('mouseout', () => {
+                isMouseOver = false;
+            });
+
+            const items = carousel.querySelectorAll('.carousel-item');
+            const scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
+            console.log("scrollLeft: ", carousel.scrollLeft);
+            console.log("scrollWidth: ", carousel.scrollWidth);
+            console.log("offsetWidth: ", carousel.offsetWidth);
+            console.log("scrollHeight: ", carousel.scrollHeight);
+            console.log("offsetHeight: ", carousel.offsetHeight);
+            console.log("Real width", carousel.offsetWidth - carousel.clientWidth);
+
+
+            let currentIndex = 0;
             function scrollModulo() {
-                const totalItemsWidth = Array.from(items).reduce((total, item) => total + item.offsetWidth, 0);
-                const scrollAmount = (currentIndex * items[0].offsetWidth) % totalItemsWidth;
-                carousel.scrollRight = scrollAmount;
-                
-                currentIndex = (currentIndex + 1) % totalItems; // Loop back when reaching the last child
+                if (!isMouseOver){
+                    console.log("Move carousel");
+                    console.log("Distance from left of carousel:", carousel.scrollLeft );
+                    
+                    let atEnd = scrollLeft >= scrollableWidth - window.getComputedStyle(carousel) ? true : false;
+                    let sign = atEnd ? 1 : -1;
+                    
+                    carousel.scrollBy(sign, 0);
+                }
             }
 
             setInterval(scrollModulo, ms);
@@ -118,6 +149,7 @@ export class HTMLHandler {
         HTMLHandler.setupDropdown(nav, settingsBtn, btns, 1200/*ms*/);
 
         const carousels = document.querySelectorAll(".carousel");
+        console.log("Carousels:",carousels);
         HTMLHandler.moveCarousels(carousels, 5000);
     }
 }

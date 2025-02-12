@@ -8,7 +8,7 @@ body{
     padding: 24px;
 
     display: grid;
-    grid-template-rows: 1fr 9fr;
+    grid-template-rows: 1fr 11fr;
 }
 
 body nav{
@@ -16,12 +16,8 @@ body nav{
 
     display: flex;
     flex-direction: row;
-    min-height: 3rem;
+    min-height: 2.5rem;
     padding: 16px;
-}
-
-body .content{
-    grid-row: 2/3;
 }
 
 #settings-container .btns{
@@ -46,30 +42,36 @@ body .content{
     flex: 1 0 0;
 }
 
-.carousal {
-    width: calc(100% - 48px);
+body .content{
+    grid-row: 2/3;
 
-    position: absolute;
+    display: flex;
+    flex-direction: column;
 
+    max-width: calc(100vw - 48px);
+}
+
+.carousel {
     display: grid;
     grid-auto-flow: column;
     gap: 8px;
 
-    overflow-x: auto;
+    overflow-x: scroll;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
 }
 
-.carousal .img-container{
+.carousel .img-container{
     scroll-snap-align: start;
     height: 100%;
 }
 
-.carousal img{
+.carousel img{
     object-fit: cover;
     object-position: center;
     height: 100%;
-    max-width: 98vw;
+    max-width: calc(100vw - 48px);
 }
 
 object[type="image/svg+xml"] {
