@@ -102,33 +102,66 @@ export class HTMLHandler {
             carousel.addEventListener('mouseout', () => {
                 isMouseOver = false;
             });
+            // we want to check where we are in the scroll,
+            // get the closest element associated with it,
+            // if we assume each element is the same size, we can divide scrollableWidth by the amt of items to get each items size, 
+            // then we can use that to determine which image from the items we are on,
+            // if we are on the last item, we switch to going left,
+            // if we are on the first item, we switch to going right,
 
             const items = carousel.querySelectorAll('.carousel-item');
-            const scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
+            let scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
+            window.addEventListener("resize", () => {
+                console.log("The page has been resized!");
+                scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
+                console.log("Actual scrollableWidth:", scrollableWidth + 24);
+            });
+
             console.log("scrollLeft: ", carousel.scrollLeft);
             console.log("scrollWidth: ", carousel.scrollWidth);
             console.log("offsetWidth: ", carousel.offsetWidth);
             console.log("scrollHeight: ", carousel.scrollHeight);
             console.log("offsetHeight: ", carousel.offsetHeight);
-            console.log("scrollableWidth", scrollableWidth);
-            console.log("Actual scrollableWidth:", scrollableWidth + 24);
+            
+            let atEnd = false;
+            let atStart = false;
+            let isGoingRight = true;
 
+            const getIsAtEndOrStart = (element)=>{
+                atStart = element.scrollLeft === 0 ? true : false;
+                atEnd = element.scrollLeft === element.scrollWidth - element.clientWidth ? true : false;
+            }
 
-            let currentIndex = 0;
-            function scrollModulo() {
+            const next = (element, by)=>{
+                element.scrollBy(by, 0);
+            }
+
+            const prev = (element, by)=>{
+                element.scrollBy(by, 0);
+            }
+
+            const scroll = ()=>{
                 if (!isMouseOver){
                     console.log("Move carousel");
-                    console.log("scrollLeft:", carousel.scrollLeft );
-                    
+                    getIsAtEndOrStart(carousel);
 
-                    let atEnd = carousel.scrollLeft > scrollableWidth + 24 ? true : false;
-                    let sign = atEnd ? -1 : 1;
-                    
-                    carousel.scrollBy(sign, 0);
+                    if (atStart){
+                        isGoingRight = true;
+                    }
+                    else if (atEnd){
+                        isGoingRight = false;
+                    }
+
+                    if (isGoingRight){
+                        next(carousel, 1);
+                    }
+                    else{
+                        prev(carousel, -1);
+                    }
                 }
             }
 
-            setInterval(scrollModulo, ms);
+            setInterval(scroll, ms);
         }
 
         // Iterate through all carousels and apply the rotation
