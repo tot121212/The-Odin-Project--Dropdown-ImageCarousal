@@ -164,7 +164,6 @@ export class HTMLHandler {
             setInterval(scroll, ms);
         }
 
-        // Iterate through all carousels and apply the rotation
         carousels.forEach(carousel => {
         rotateCarousel(carousel);
         });
