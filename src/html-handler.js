@@ -110,17 +110,19 @@ export class HTMLHandler {
             console.log("offsetWidth: ", carousel.offsetWidth);
             console.log("scrollHeight: ", carousel.scrollHeight);
             console.log("offsetHeight: ", carousel.offsetHeight);
-            console.log("Real width", carousel.offsetWidth - carousel.clientWidth);
+            console.log("scrollableWidth", scrollableWidth);
+            console.log("Actual scrollableWidth:", scrollableWidth + 24);
 
 
             let currentIndex = 0;
             function scrollModulo() {
                 if (!isMouseOver){
                     console.log("Move carousel");
-                    console.log("Distance from left of carousel:", carousel.scrollLeft );
+                    console.log("scrollLeft:", carousel.scrollLeft );
                     
-                    let atEnd = scrollLeft >= scrollableWidth - window.getComputedStyle(carousel) ? true : false;
-                    let sign = atEnd ? 1 : -1;
+
+                    let atEnd = carousel.scrollLeft > scrollableWidth + 24 ? true : false;
+                    let sign = atEnd ? -1 : 1;
                     
                     carousel.scrollBy(sign, 0);
                 }
