@@ -76,98 +76,114 @@ export class HTMLHandler {
         }
     }
 
-    static getTotalScrollableWidth(items) {
-        let totalWidth = 0;
-        
-        items.forEach((item) => {
-            const style = window.getComputedStyle(item);
-            const marginRight = parseFloat(style.marginRight) || 0;
-            totalWidth += item.getBoundingClientRect().width + marginRight;
-        });
-    
-        return totalWidth;
-    }
-    
+    // get left pos that match with indicies
+    static getLeftPositions = (items, container) => {
+        const leftPositions = Array.from(items).map(item => item.getBoundingClientRect().left - 24);
+        console.log("Left positions relative to container:", leftPositions);
+        return leftPositions;
+    };
 
-    //typeof carousels === NodeListOf<Element>
+    static delay = (ms)=>{
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     static moveCarousels = (carousels, ms)=>{
-        // Function to rotate a single carousel
-        function rotateCarousel(carousel) {
+        const rotateCarousel = async (carousel)=>{
             console.log("Init carousel");
             let isMouseOver = false;
+
+            const items = carousel.querySelectorAll('.carousel-item');
+            
+            let leftPositions;
+            const resize = ()=>{
+                console.log("The page has been resized!");
+                leftPositions = HTMLHandler.getLeftPositions(items, carousel);
+            };
+            window.addEventListener("resize", resize);
+            await HTMLHandler.delay(100/*ms*/);
+            resize();
+
+            console.log("scrollWidth: ", carousel.scrollWidth);
+            console.log("offsetWidth: ", carousel.offsetWidth);
+
+            let atEnd = false;
+            let atStart = false;
+            let isGoingRight = true;
+            let curIdx = 0;
+
+            const getIsAtStartOrEnd = ()=>{
+                atStart = carousel.scrollLeft === 0 ? true : false;
+                atEnd = carousel.scrollLeft === carousel.scrollWidth - carousel.clientWidth ? true : false;
+                console.log("atStart?", atStart);
+                console.log("atEnd?", atEnd);
+            }
+
+            const findClosestIndex = (scrollLeft, leftPositions) => {
+                let low = 0, high = leftPositions.length - 1;
+                
+                while (low < high) {
+                    let mid = Math.floor((low + high) / 2);
+                    if (leftPositions[mid] < scrollLeft) {
+                        low = mid + 1;
+                    } else {
+                        high = mid;
+                    }
+                }
+                
+                // Ensure we return the closest index (not exceeding scrollLeft)
+                return (low > 0 && leftPositions[low] > scrollLeft) ? low - 1 : low;
+            };
+            
+            const acquireNextPos = () => {
+                // Determine the current index based on the scrollbar position
+                curIdx = findClosestIndex(carousel.scrollLeft, leftPositions);
+            
+                // Adjust direction at boundaries
+                if (atStart) isGoingRight = true;
+                else if (atEnd) isGoingRight = false;
+            
+                // Move to the next position
+                if (isGoingRight) {
+                    curIdx = Math.min(curIdx + 1, items.length - 1);
+                } else {
+                    curIdx = Math.max(curIdx - 1, 0);
+                }
+            
+                console.log("Is going right?:", isGoingRight);
+                console.log("curIdx:", curIdx);
+            
+                // Get the next item's leftmost position
+                const nextPos = Math.max(leftPositions[curIdx], 0);
+                console.log("nextPos:", nextPos);
+                return nextPos;
+            };
+            
+            
+            const scroll = ()=>{
+                if (!isMouseOver){
+                    console.log("Move carousel");
+                    getIsAtStartOrEnd();
+                    let to = acquireNextPos();
+                    carousel.scrollTo(to+1, 0);
+                    console.log("curPos:", carousel.scrollLeft);
+                }
+            }
+
+            setInterval(scroll, ms);
+
             carousel.addEventListener('mouseover', () => {
                 isMouseOver = true;
+                
             });
 
             carousel.addEventListener('mouseout', () => {
                 isMouseOver = false;
             });
-            // we want to check where we are in the scroll,
-            // get the closest element associated with it,
-            // if we assume each element is the same size, we can divide scrollableWidth by the amt of items to get each items size, 
-            // then we can use that to determine which image from the items we are on,
-            // if we are on the last item, we switch to going left,
-            // if we are on the first item, we switch to going right,
-
-            const items = carousel.querySelectorAll('.carousel-item');
-            let scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
-            window.addEventListener("resize", () => {
-                console.log("The page has been resized!");
-                scrollableWidth = HTMLHandler.getTotalScrollableWidth(items);
-                console.log("Actual scrollableWidth:", scrollableWidth + 24);
-            });
-
-            console.log("scrollLeft: ", carousel.scrollLeft);
-            console.log("scrollWidth: ", carousel.scrollWidth);
-            console.log("offsetWidth: ", carousel.offsetWidth);
-            console.log("scrollHeight: ", carousel.scrollHeight);
-            console.log("offsetHeight: ", carousel.offsetHeight);
-            
-            let atEnd = false;
-            let atStart = false;
-            let isGoingRight = true;
-
-            const getIsAtEndOrStart = (element)=>{
-                atStart = element.scrollLeft === 0 ? true : false;
-                atEnd = element.scrollLeft === element.scrollWidth - element.clientWidth ? true : false;
-            }
-
-            const next = (element, by)=>{
-                element.scrollBy(by, 0);
-            }
-
-            const prev = (element, by)=>{
-                element.scrollBy(by, 0);
-            }
-
-            const scroll = ()=>{
-                if (!isMouseOver){
-                    console.log("Move carousel");
-                    getIsAtEndOrStart(carousel);
-
-                    if (atStart){
-                        isGoingRight = true;
-                    }
-                    else if (atEnd){
-                        isGoingRight = false;
-                    }
-
-                    if (isGoingRight){
-                        next(carousel, 1);
-                    }
-                    else{
-                        prev(carousel, -1);
-                    }
-                }
-            }
-
-            setInterval(scroll, ms);
         }
 
         carousels.forEach(carousel => {
-        rotateCarousel(carousel);
+            rotateCarousel(carousel);
         });
-
     }
 
     static init = ()=>{
@@ -181,7 +197,7 @@ export class HTMLHandler {
         const btns = nav.querySelector(".btns");
 
         HTMLHandler.setupDropdown(nav, settingsBtn, btns, 1200/*ms*/);
-
+        
         const carousels = document.querySelectorAll(".carousel");
         console.log("Carousels:",carousels);
         HTMLHandler.moveCarousels(carousels, 5000);
