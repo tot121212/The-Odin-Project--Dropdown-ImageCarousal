@@ -4,9 +4,17 @@ import RightArrowSVG from "./media/arrow-small-right.svg";
 import Squirrel1IMG from "./media/istockphoto-614737202-612x612.jpg";
 import Squirrel2IMG from "./media/istockphoto-1131581504-612x612.jpg";
 import Squirrel3IMG from "./media/squirrel cropped.jpg";
-
+import EmptyDotSVG from "./media/circle-dashed.svg";
 
 export class HTMLHandler {
+    static createObjectWithSVG = (svg)=>{
+        const object = document.createElement("object");
+        object.type = "image/svg+xml";
+        object.data = svg;
+        object.setAttribute("ratio", "1/1");
+        return object;
+    }
+
     static updateObjectWithSVG = (query, svg)=>{
         const objects = document.querySelectorAll(query);
         for (const object of objects){
@@ -198,11 +206,17 @@ export class HTMLHandler {
 
             const createCarouselIdxButton = (idx)=>{
                 const button = document.createElement("button");
-                button.classList.add("carousel-idx-btn");
+                button.classList.add("carousel-idx-btn", "grabbable", "logo", "large");
                 button.dataset.idx = idx;
+
                 button.addEventListener("click", ()=>{
-                    scrollToIdx(idx);
+                    HTMLHandler.fadeElementOutAndIn(button, fadeTime);
+                    scrollToIdx(button.dataset.idx);
                 });
+
+                const object = HTMLHandler.createObjectWithSVG(EmptyDotSVG);
+                button.appendChild(object);
+
                 return button;
             }
             // for (item of items){
@@ -210,7 +224,11 @@ export class HTMLHandler {
             //     buttonContainer.appendChild(button);
             // }
 
+            const carouselIdxButtonContainer = document.createElement("div");
+            carouselIdxButtonContainer.classList.add("carousel-idx-btn-container");
             const carouselIdxButtons = Array.from(items).map((item, idx) => createCarouselIdxButton(idx));
+            carouselIdxButtons.forEach(button => carouselIdxButtonContainer.appendChild(button));
+            carousel.appendChild(carouselIdxButtonContainer);
 
             setInterval(autoScroll, ms);
         }
