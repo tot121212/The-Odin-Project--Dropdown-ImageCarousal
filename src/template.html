@@ -8,7 +8,7 @@
     <nav>
         <div id="settings-container">
             <button id="settings" class="grabbable logo large">
-                <object class="three-bars-svg" type="image/svg+xml"></object>
+                <object class="three-bars-svg" type="image/svg+xml" ratio="1/1"></object>
             </button>
             <div class="btns" hidden>
                 <div class="flex-container">
@@ -21,14 +21,24 @@
     </nav>
     <div class="content">
         <div class="carousel">
-            <div class="carousel-item img-container">
-                <img class="squirrel-1-img" alt="Squirrel 1">
+            <div class="carousel-item-container">
+                <div class="carousel-item img-container">
+                    <img class="squirrel-1-img" alt="Squirrel 1">
+                </div>
+                <div class="carousel-item img-container">
+                    <img class="squirrel-2-img" alt="Squirrel 2">
+                </div>
+                <div class="carousel-item img-container">
+                    <img class="squirrel-3-img" alt="Squirrel 3">
+                </div>
             </div>
-            <div class="carousel-item img-container">
-                <img class="squirrel-2-img" alt="Squirrel 2">
-            </div>
-            <div class="carousel-item img-container">
-                <img class="squirrel-3-img" alt="Squirrel 3">
+            <div class="carousel-btn-container">
+                <button class="grabbable logo large" id="left-arrow">
+                    <object class="left-arrow-svg" type="image/svg+xml" ratio="1/1"></object>
+                </button>
+                <button class="grabbable logo large" id="right-arrow">
+                    <object class="right-arrow-svg" type="image/svg+xml" ratio="1/1"></object>
+                </button>
             </div>
         </div>
     </div>
