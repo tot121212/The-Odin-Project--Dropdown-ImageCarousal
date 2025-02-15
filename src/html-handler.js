@@ -198,7 +198,6 @@ export class HTMLHandler {
                 HTMLHandler.fadeElementOutAndIn(leftArrowButton, fadeTime);
                 prev();
             });
-            rightArrowButton.addEventListener("click", next);
             rightArrowButton.addEventListener("click", ()=>{
                 HTMLHandler.fadeElementOutAndIn(rightArrowButton, fadeTime);
                 next();
@@ -239,8 +238,8 @@ export class HTMLHandler {
                 const prevButton = carouselIdxButtons[prevIdx];
                 const prevObject = prevButton?.querySelector("object");
             
-                if (curObject) curObject.data = FullDotSVG;
                 if (prevObject) prevObject.data = EmptyDotSVG;
+                if (curObject) curObject.data = FullDotSVG;
             });
             
 
