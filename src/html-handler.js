@@ -5,6 +5,7 @@ import Squirrel1IMG from "./media/istockphoto-614737202-612x612.jpg";
 import Squirrel2IMG from "./media/istockphoto-1131581504-612x612.jpg";
 import Squirrel3IMG from "./media/squirrel cropped.jpg";
 import EmptyDotSVG from "./media/circle-dashed.svg";
+import FullDotSVG from "./media/dot-circle.svg";
 
 export class HTMLHandler {
     static createObjectWithSVG = (svg)=>{
@@ -15,7 +16,7 @@ export class HTMLHandler {
         return object;
     }
 
-    static updateObjectWithSVG = (query, svg)=>{
+    static updateObjectWithSVGQuery = (query, svg)=>{
         const objects = document.querySelectorAll(query);
         for (const object of objects){
             object.data = svg;
@@ -129,7 +130,9 @@ export class HTMLHandler {
             let isGoingRight = true;
 
             let curIdx = 0;
+            let prevIdx = 0;
             const setCurIdx = (idx)=>{
+                prevIdx = curIdx;
                 curIdx = Math.max(
                     0,
                     Math.min(
@@ -138,6 +141,7 @@ export class HTMLHandler {
                     )
                 );
                 console.log("curIdx:", curIdx);
+                carousel.dispatchEvent(new Event("setCurIdx"));
             }
 
             let isMouseOver = false;
@@ -207,11 +211,10 @@ export class HTMLHandler {
             const createCarouselIdxButton = (idx)=>{
                 const button = document.createElement("button");
                 button.classList.add("carousel-idx-btn", "grabbable", "logo", "large");
-                button.dataset.idx = idx;
 
                 button.addEventListener("click", ()=>{
                     HTMLHandler.fadeElementOutAndIn(button, fadeTime);
-                    scrollToIdx(button.dataset.idx);
+                    scrollToIdx(idx);
                 });
 
                 const object = HTMLHandler.createObjectWithSVG(EmptyDotSVG);
@@ -229,6 +232,17 @@ export class HTMLHandler {
             const carouselIdxButtons = Array.from(items).map((item, idx) => createCarouselIdxButton(idx));
             carouselIdxButtons.forEach(button => carouselIdxButtonContainer.appendChild(button));
             carousel.appendChild(carouselIdxButtonContainer);
+            carousel.addEventListener("setCurIdx", () => {
+                const curButton = carouselIdxButtons[curIdx];
+                const curObject = curButton?.firstElementChild;
+            
+                const prevButton = carouselIdxButtons[prevIdx];
+                const prevObject = prevButton?.querySelector("object");
+            
+                if (curObject) curObject.data = FullDotSVG;
+                if (prevObject) prevObject.data = EmptyDotSVG;
+            });
+            
 
             setInterval(autoScroll, ms);
         }
@@ -239,9 +253,9 @@ export class HTMLHandler {
     }
 
     static init = ()=>{
-        HTMLHandler.updateObjectWithSVG("object.three-bars-svg", ThreeBarsSVG);
-        HTMLHandler.updateObjectWithSVG("object.left-arrow-svg", LeftArrowSVG);
-        HTMLHandler.updateObjectWithSVG("object.right-arrow-svg", RightArrowSVG);
+        HTMLHandler.updateObjectWithSVGQuery("object.three-bars-svg", ThreeBarsSVG);
+        HTMLHandler.updateObjectWithSVGQuery("object.left-arrow-svg", LeftArrowSVG);
+        HTMLHandler.updateObjectWithSVGQuery("object.right-arrow-svg", RightArrowSVG);
 
         HTMLHandler.updateIMGwithIMG("img.squirrel-1-img", Squirrel1IMG);
         HTMLHandler.updateIMGwithIMG("img.squirrel-2-img", Squirrel2IMG);
