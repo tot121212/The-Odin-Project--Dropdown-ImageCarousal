@@ -181,8 +181,16 @@ export class HTMLHandler {
             const buttonContainer = carousel.querySelector(".carousel-btn-container");
             const leftArrowButton = buttonContainer.querySelector("#left-arrow");
             const rightArrowButton = buttonContainer.querySelector("#right-arrow");
-            leftArrowButton.addEventListener("click", prev);
+            const fadeTime = 200;
+            leftArrowButton.addEventListener("click", ()=>{
+                HTMLHandler.fadeElementOutAndIn(leftArrowButton, fadeTime);
+                prev();
+            });
             rightArrowButton.addEventListener("click", next);
+            rightArrowButton.addEventListener("click", ()=>{
+                HTMLHandler.fadeElementOutAndIn(rightArrowButton, fadeTime);
+                next();
+            });
 
             // create circle button for each idx
                 // store idx in button.dataset
